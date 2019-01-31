@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const faker = require('faker');
-const screenshot = true;
+const screenshot = false;
 
 const dataGen = () => {
   const userId = faker.internet.userName();
@@ -10,12 +10,10 @@ const dataGen = () => {
   return { userId, password, memword, phone };
 }
 
+const range = (n) => Array(n).fill(1).map((x, y) => x + y);
 
-(async () => {
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
+async function browse(page) {
   const data = dataGen();
   console.log(data);
   const { userId, password, memword, phone } = data;
@@ -50,6 +48,16 @@ const dataGen = () => {
   if (screenshot) {
     await page.screenshot({path: 'step4.png'});
   }
+}
 
+
+(async () => {
+  const browser = await puppeteer.launch();
+  for (const i of range(10)) {
+    console.log(`#${i}`);
+    const page = await browser.newPage();
+    await browse(page);
+    await page.close();
+  }
   await browser.close();
 })();
